@@ -1,16 +1,18 @@
+# Build output
+target/
+bin/
+
+# Eclipse
+.settings/
+*.launch
+
 # Compiled class file
 *.class
 
 # Log file
 *.log
 
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
+# Package Files
 *.jar
 *.war
 *.nar
@@ -19,6 +21,17 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# Native libraries are a deployment dependency, never committed
+*.so
+*.so.*
+
+# virtual machine crash logs
 hs_err_pid*
 replay_pid*
+
+# OS
+.DS_Store
+
+_to_delete
+_to_delete*
+_to_delete/
