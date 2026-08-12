@@ -21,10 +21,6 @@ bin/
 *.tar.gz
 *.rar
 
-# Native libraries are a deployment dependency, never committed
-*.so
-*.so.*
-
 # virtual machine crash logs
 hs_err_pid*
 replay_pid*

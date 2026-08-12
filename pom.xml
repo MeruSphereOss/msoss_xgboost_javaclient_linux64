@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.merusphere.devops.xgboost</groupId>
+	<artifactId>xgboost-javaclient-linux64</artifactId>
+	<version>1.0.0</version>
+	<packaging>jar</packaging>
+
+	<name>xgboost-javaclient-linux64</name>
+	<description>
+		Java 25 client library for XGBoost: Foreign Function &amp; Memory (FFM)
+		API over jextract-generated bindings for the XGBoost C API. Zero-copy
+		off-heap ingest through the array-interface protocol, no JNI, no bundled
+		native payload.
+	</description>
+	<url>https://github.com/MeruSphereOss/msoss_xgboost_javaclient_linux64</url>
+	<inceptionYear>2026</inceptionYear>
+
+	<organization>
+		<name>MeruSphere</name>
+		<url>https://github.com/MeruSphereOss</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>PC Varma</name>
+			<email>pcvarma@gmail.com</email>
+			<organization>MeruSphere</organization>
+			<organizationUrl>https://github.com/MeruSphereOss</organizationUrl>
+			<roles>
+				<role>owner</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>
+			scm:git:https://github.com/MeruSphereOss/msoss_xgboost_javaclient_linux64.git</connection>
+		<developerConnection>
+			scm:git:ssh://git@github.com/MeruSphereOss/msoss_xgboost_javaclient_linux64.git</developerConnection>
+		<url>https://github.com/MeruSphereOss/msoss_xgboost_javaclient_linux64</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>
+			https://github.com/MeruSphereOss/msoss_xgboost_javaclient_linux64/issues</url>
+	</issueManagement>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.release>25</maven.compiler.release>
+
+		<!-- XGBoost release native/include/xgboost/c_api.h was vendored from.
+		     Keep scripts/02-generate-bindings.sh in step when this changes. -->
+		<xgboost.header.version>3.2.0</xgboost.header.version>
+
+		<!-- Directory holding libxgboost.so, used when running the tests:
+		         mvn test -Dxgboost.library.path=/opt/xgboost/lib
+		     Empty means fall back to System.loadLibrary("xgboost"), i.e.
+		     java.library.path / LD_LIBRARY_PATH / ldconfig. -->
+		<xgboost.library.path></xgboost.library.path>
+
+		<junit.version>5.12.2</junit.version>
+	</properties>
+
+	<dependencies>
+		<!-- No compile dependencies: the client is JDK-only (FFM). -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- jextract output lives outside src/main/java; add it as a source
+			root -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.6.1</version>
+				<executions>
+					<execution>
+						<id>add-generated-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/generated/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.14.0</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.3</version>
+				<configuration>
+					<!-- FFM downcalls are restricted methods -->
+					<argLine>
+						--enable-native-access=ALL-UNNAMED
+						-Dxgboost.library.path=${xgboost.library.path}
+					</argLine>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.4.2</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>
+								com.merusphere.devops.xgboost.javaclient.linux64.demo.XgboostDemo</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Enable-Native-Access>ALL-UNNAMED</Enable-Native-Access>
+							<XGBoost-Header-Version>${xgboost.header.version}</XGBoost-Header-Version>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.3.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!--
+        Everything Maven Central additionally requires lives here so that the
+        day-to-day `mvn package` / `mvn install` stays fast and needs no GPG key.
+
+        Release with:   mvn -Prelease clean deploy
+        See RELEASING.md for the full procedure.
+    -->
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<!-- Central requires a -javadoc.jar next to the jar and
+					sources.
+                         The jextract-generated bindings are excluded: machine
+                         generated, undocumented, and not part of the public API. -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.11.2</version>
+						<configuration>
+							<doclint>none</doclint>
+							<quiet>true</quiet>
+							<notimestamp>true</notimestamp>
+							<excludePackageNames>
+								com.merusphere.devops.xgboost.javaclient.linux64.capi
+							</excludePackageNames>
+						</configuration>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Central requires a detached PGP signature (.asc) for
+					every file.
+                         gpg.passphrase comes from settings.xml or -Dgpg.passphrase=... -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>3.2.7</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<gpgArguments>
+										<arg>--pinentry-mode</arg>
+										<arg>loopback</arg>
+									</gpgArguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>0.11.0</version>
+						<extensions>true</extensions>
+						<configuration>
+							<publishingServerId>central</publishingServerId>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

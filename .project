@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+  <name>xgboost-javaclient-linux64</name>
+  <comment>Java 25 client library for XGBoost: Foreign Function &amp; Memory (FFM)
+		API over jextract-generated bindings for the XGBoost C API. Zero-copy
+		off-heap ingest through the array-interface protocol, no JNI, no bundled
+		native payload. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
